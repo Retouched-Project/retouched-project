@@ -31,6 +31,8 @@ Without a nested message: 5 (envelope) + 4 + 4 + 8 + 8 + 4 + 4 + 2 + 2 + 1 = **4
 
 Each channel maintains its own independent sequence counter. When a packet is sent, the sequence number is drawn from that channel's counter, not a shared global one. See [Channels](channels.md) for more details.
 
+If a packet is constructed without a channel assignment (i.e., `sequence` is still `0` at serialization time), a global fallback counter is used instead. This can occur for packets sent outside the normal channel pipeline, such as `Ack` or `Ping` responses.
+
 ## Packet Types
 
 See [Packet Types](../../reference/packet-types.md) for a detailed breakdown.

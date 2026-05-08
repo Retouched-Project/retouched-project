@@ -47,6 +47,8 @@ The `deviceAddress` field contains the device's private network address:
 
 - **Class ID**: 1
 
+Only controllers populate the `address` field with their real private IP. Game hosts hardcode a placeholder (`192.168.0.1`) because they do not need to be directly reachable by IP. Instead, when a controller wants to connect, it sends a [`deviceConnectRequested`](../registry/relay.md) relay through the registry, and the game host initiates the direct TCP connection back to the controller using the controller's address.
+
 ## Conditional Fields
 
 The `currentPlayers` and `maxPlayers` fields are only serialized when `slotId > 0`, which indicates the device is a game host. Controllers (which always have `slotId = 0`) omit these fields entirely. The deserializer uses the same `slotId > 0` check to decide whether to read them.

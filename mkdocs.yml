@@ -67,9 +67,9 @@ nav:
       - registry.update / onHostUpdate: protocol/registry/update.md
       - onHostConnected: protocol/registry/host-connected.md
       - onHostDisconnected: protocol/registry/host-disconnected.md
-      - GetPortalId: protocol/registry/portal-id.md
     - Game Session RPC:
       - Overview: protocol/session/index.md
+      - GetPortalId: protocol/session/portal-id.md
       - RequestXML & Delivery: protocol/session/request-xml.md
       - SetControlMode: protocol/session/set-control-mode.md
       - Capabilities: protocol/session/capabilities.md

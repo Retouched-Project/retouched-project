@@ -30,6 +30,21 @@ The main use of `registry.relay` is to initiate a direct connection between a co
 3. The registry server forwards this `BMInvoke` to the game host.
 4. The game host receives the `deviceConnectRequested` call, opens a direct TCP connection to the controller using the address from the relayed `BMRegistryInfo`, and sends an [AckPacket](../messages/ping-ack.md#ackpacket) over the new direct connection.
 
+```mermaid
+sequenceDiagram
+    participant Controller
+    participant Server as Registry Server
+    participant Host as Game Host
+
+    Controller->>Server: registry.relay(HostInfo, deviceConnectRequested)
+    Server->>Host: deviceConnectRequested(ControllerInfo)
+    
+    note over Host,Controller: Direct Connection Initiated
+    Host->>Controller: TCP Connect to Controller IP
+    Host->>Controller: Handshake
+    Host->>Controller: AckPacket (Channel 0)
+```
+
 ## Notes
 
 - The relay payload is a nested `BMInvoke` inside the outer `registry.relay` invoke. See [BMInvoke](../objects/bm-invoke.md) for the wire format.

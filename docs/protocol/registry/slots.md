@@ -25,20 +25,20 @@ Each slot ID maps to a color, cycling through 15 values. Both the game host and 
 
 | Slot | Color | Hex |
 |------|-------|-----|
-| 1 | Orange | `#FF6900` |
-| 2 | Gold | `#FED000` |
-| 3 | Hot Pink | `#FF2C9B` |
-| 4 | Red-Pink | `#FF0066` |
-| 5 | Purple | `#D500FF` |
-| 6 | Olive | `#969C00` |
-| 7 | Lavender | `#9B96CE` |
-| 8 | Mint | `#00CD97` |
-| 9 | Green | `#009B00` |
-| 10 | Cyan | `#00C9FF` |
-| 11 | Navy | `#112F68` |
-| 12 | Lime | `#8AFF00` |
-| 13 | Crimson | `#D01300` |
-| 14 | Light Green | `#76D061` |
-| 15 | Violet | `#7400FF` |
+| 1 | <span style="display:inline-block;width:1em;height:1em;background:#FF6900;border-radius:3px;vertical-align:middle"></span> Orange | `#FF6900` |
+| 2 | <span style="display:inline-block;width:1em;height:1em;background:#FED000;border-radius:3px;vertical-align:middle"></span> Gold | `#FED000` |
+| 3 | <span style="display:inline-block;width:1em;height:1em;background:#FF2C9B;border-radius:3px;vertical-align:middle"></span> Hot Pink | `#FF2C9B` |
+| 4 | <span style="display:inline-block;width:1em;height:1em;background:#FF0066;border-radius:3px;vertical-align:middle"></span> Red-Pink | `#FF0066` |
+| 5 | <span style="display:inline-block;width:1em;height:1em;background:#D500FF;border-radius:3px;vertical-align:middle"></span> Purple | `#D500FF` |
+| 6 | <span style="display:inline-block;width:1em;height:1em;background:#969C00;border-radius:3px;vertical-align:middle"></span> Olive | `#969C00` |
+| 7 | <span style="display:inline-block;width:1em;height:1em;background:#9B96CE;border-radius:3px;vertical-align:middle"></span> Lavender | `#9B96CE` |
+| 8 | <span style="display:inline-block;width:1em;height:1em;background:#00CD97;border-radius:3px;vertical-align:middle"></span> Mint | `#00CD97` |
+| 9 | <span style="display:inline-block;width:1em;height:1em;background:#009B00;border-radius:3px;vertical-align:middle"></span> Green | `#009B00` |
+| 10 | <span style="display:inline-block;width:1em;height:1em;background:#00C9FF;border-radius:3px;vertical-align:middle"></span> Cyan | `#00C9FF` |
+| 11 | <span style="display:inline-block;width:1em;height:1em;background:#112F68;border-radius:3px;vertical-align:middle"></span> Navy | `#112F68` |
+| 12 | <span style="display:inline-block;width:1em;height:1em;background:#8AFF00;border-radius:3px;vertical-align:middle"></span> Lime | `#8AFF00` |
+| 13 | <span style="display:inline-block;width:1em;height:1em;background:#D01300;border-radius:3px;vertical-align:middle"></span> Crimson | `#D01300` |
+| 14 | <span style="display:inline-block;width:1em;height:1em;background:#76D061;border-radius:3px;vertical-align:middle"></span> Light Green | `#76D061` |
+| 15 | <span style="display:inline-block;width:1em;height:1em;background:#7400FF;border-radius:3px;vertical-align:middle"></span> Violet | `#7400FF` |
 
 For slot IDs above 15, the color wraps: `colorIndex = (slotId - 1) % 15 + 1`.

@@ -10,6 +10,26 @@ The registry server acts as a matchmaker between game hosts and controllers. All
 4. On success (`onRegister` returns `true`), the controller calls `registry.list` to retrieve available game hosts.
 5. The server sends push notifications (`onHostConnected`, `onHostDisconnected`, `onHostUpdate`) as hosts come and go.
 
+```mermaid
+sequenceDiagram
+    participant Controller
+    participant Server as Registry Server
+    participant Host as Game Host
+
+    Host->>Server: registry.register(info)
+    Server-->>Host: onRegister(true)
+    
+    Controller->>Server: TCP Connection + Handshake
+    Controller->>Server: registry.register(info)
+    Server-->>Controller: onRegister(true)
+    
+    Controller->>Server: registry.list()
+    Server-->>Controller: onList([Host1, Host2])
+    
+    note over Server,Controller: Later: Host connects
+    Server-->>Controller: onHostConnected(Host3)
+```
+
 ## RPC Methods
 
 ### Client to Server

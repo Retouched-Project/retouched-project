@@ -52,7 +52,7 @@ nav:
       - StringLiteral: protocol/objects/string-literal.md
     - Input Messages:
       - Overview: protocol/messages/index.md
-      - Ping / Ack / KeepAlive: protocol/messages/ping-ack.md
+      - Ping / Echo / Ack / KeepAlive: protocol/messages/ping-ack.md
       - D-Pad Update: protocol/messages/dpad-update.md
       - Touch / TouchSet: protocol/messages/touch.md
       - Acceleration: protocol/messages/acceleration.md

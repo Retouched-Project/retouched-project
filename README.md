@@ -3,7 +3,7 @@
 </p>
 
 > [!NOTE]
-> **The Retouched Project and its repositories are not officially supported Ntrome Ltd. or Infrared5 Inc. products.**
+> **The Retouched Project and its repositories are not officially supported Nitrome Ltd. or Infrared5 Inc. products.**
 
 # Retouched Project
 The Retouched Project's GitHub pages website.

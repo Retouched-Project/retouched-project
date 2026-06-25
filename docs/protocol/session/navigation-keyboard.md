@@ -30,7 +30,7 @@ While the controller is in `NAVIGATION` mode (control mode `2`), it behaves like
 
 ## onKeyString
 
-In `KEYBOARD` mode (control mode `1`) the controller shows a text field and lets the user type. As they type, it reports the keys to the host one at a time with this call. The host can pre-fill that field using the start string it passed to [`SetControlMode`](set-control-mode.md).
+In `KEYBOARD` mode (control mode `1`) the controller shows a text field and lets the user type. The host can pre-fill that field using the start string it passed to [`SetControlMode`](set-control-mode.md), and the controller reports each edit as it happens with this call.
 
 | Field | Value |
 |-------|-------|
@@ -41,10 +41,18 @@ In `KEYBOARD` mode (control mode `1`) the controller shows a text field and lets
 
 | # | Type | Description |
 |---|------|-------------|
-| 1 | `string` | The key that was pressed. |
+| 1 | `string` | One incremental edit to the text. See the values below. |
+
+### Edit Values
+
+| Value | Meaning |
+|-------|---------|
+| a non-empty string | Text that was just inserted (one character while typing, or several when text is pasted). |
+| an empty string (`""`) | One character was deleted (a backspace). |
+| `"\n"` | The Enter / submit key. |
 
 ## Behavior
 
 Both calls are one-way: the controller is just telling the host what happened, and it doesn't expect anything back. It also only sends them in the matching mode, navigation actions in `NAVIGATION` mode and keys in `KEYBOARD` mode. In the usual `GAMEPAD` mode it sends control-scheme input instead, like [touch](../messages/touch.md), [sensors](../messages/acceleration.md), and the [d-pad](../messages/dpad-update.md).
 
-The navigation vocabulary is fixed to the six values above, so a host can safely treat anything else as unexpected. And because keys arrive one at a time rather than as a finished string, it's up to the host to build the text back up from the run of keypresses, starting from whatever it pre-filled.
+The navigation vocabulary is fixed to the six values above, so a host can safely treat anything else as unexpected. Keys are not sent as a finished string either: the controller starts from whatever text the host pre-filled, then streams the edits, so the host rebuilds the field by appending each inserted string and dropping the last character for every empty one.

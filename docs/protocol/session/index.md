@@ -15,9 +15,10 @@ sequenceDiagram
     Controller->>Host: GetPortalId
     Host-->>Controller: onPortalId(id)
     Controller->>Host: setCapabilities(mask)
-    Controller->>Host: RequestXML(w, h, deviceId)
-    Host-->>Controller: onControlSchemeParsed (XML chunks)
-    Host->>Controller: SetControlMode(MODE_GAMEPAD)
+    Controller->>Host: RequestXML(height, width, deviceId)
+    Host-->>Controller: XML delivered as BMByteChunk
+    Controller->>Host: onControlSchemeParsed(deviceId)
+    Host->>Controller: SetControlMode(GAME)
 
     note over Host,Controller: Gameplay Loop
     Controller->>Host: Touch / Acceleration / Gyro / DPad
@@ -44,7 +45,7 @@ sequenceDiagram
 | [`vibrate`](vibrate.md) | Trigger the controller's vibration motor. |
 | [`promptTrialUpsell`](trial-purchase.md) | Prompt the controller to show the trial upsell UI. |
 | [`updateWallet`](trial-purchase.md) | Tell the controller to refresh its in-app currency wallet. |
-| [`WaitForNewHost`](trial-purchase.md) | Instruct the controller to wait for a new host connection. |
+| [`WaitForNewHost`](trial-purchase.md) | Hand the controller a portal identifier and park it in `WAIT` mode. |
 
 ### Controller to Host
 
@@ -55,6 +56,11 @@ sequenceDiagram
 | [`RequestXML`](request-xml.md) | Request the control layout schema for the controller's screen dimensions. |
 | [`onNavigationString`](navigation-keyboard.md) | Deliver a system navigation event (e.g., back button). |
 | [`onKeyString`](navigation-keyboard.md) | Deliver a hardware keyboard key press. |
+| [`onControlSchemeParsed`](request-xml.md) | Confirm the control scheme arrived and parsed. |
+| [`gotCookie`](cookies.md) | Answer a `getCookie` with the stored name and value. |
+| [`menuEvent`](../controls/context-menu.md) | Report that a context menu option was chosen. |
+| `bmPause` | Report that the player opened or closed the controller's own menu. |
+| the scheme's `functionHandler` names | Report a button press or release. One method per button, named by the [control scheme](../controls/display-objects.md). |
 | [`startTrial`](trial-purchase.md) | Signal the start of a trial session. |
 | [`endTrial`](trial-purchase.md) | Signal the end of a trial session. |
 

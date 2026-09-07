@@ -7,14 +7,14 @@ Requests the current list of registered game hosts from the registry server.
 | Field | Value |
 |-------|-------|
 | **Method** | `registry.list` |
-| **Return Method** | `onList` |
+| **Return Method** | The caller's own, never a fixed name. See [Return Values](../objects/bm-invoke.md#return-values). |
 | **Arguments** | 0 |
 
 The controller sends this call immediately after a successful [`registry.register`](register.md). No arguments are required.
 
 ## Response: onList
 
-The server responds by invoking `onList` on the caller:
+The server replies by invoking whichever return method the caller named:
 
 | # | Type | Description |
 |---|------|-------------|

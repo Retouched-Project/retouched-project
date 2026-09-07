@@ -14,8 +14,8 @@ The control scheme exchange is how the game host delivers its UI layout to the c
 
 | # | Type | Description |
 |---|------|-------------|
-| 1 | `i32` | Controller screen width. |
-| 2 | `i32` | Controller screen height. |
+| 1 | `i32` | Controller screen height. |
+| 2 | `i32` | Controller screen width. |
 | 3 | `string` | Controller's `deviceId`. |
 
 The controller sends this after connecting and reporting its capabilities via [`setCapabilities`](capabilities.md).
@@ -31,6 +31,8 @@ Each chunk contains:
 - A slice of the raw XML bytes.
 
 The default chunk size is 10,240 bytes. If the total XML fits in a single chunk, only one is sent. Otherwise, the host sends chunks with a ~10ms delay between each.
+
+The size is the sender's choice, not a protocol constant. Hosts raise it to 65,535 where the runtime allows, and individual games set their own. A receiver must reassemble using the offset and total size in each chunk rather than assuming any particular size.
 
 ## Completion: onControlSchemeParsed
 

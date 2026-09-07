@@ -7,7 +7,7 @@ Allows a game host to push metadata changes to the registry server, which then b
 | Field | Value |
 |-------|-------|
 | **Method** | `registry.update` |
-| **Return Method** | `onRegister` |
+| **Return Method** | The caller's own, never a fixed name. See [Return Values](../objects/bm-invoke.md#return-values). |
 | **Arguments** | 1 |
 
 ### Arguments

@@ -6,7 +6,8 @@ Every serializable object in the protocol is identified by a 16-bit class ID. Th
 |----------|--------|-------------|
 | 0 | BMPacket | Protocol packet wrapper |
 | 1 | BMAddress | Network address (private IP + ports) |
-| 3 | BMParameter | Typed value wrapper (String, Int, Float, Bool, ByteArray, Object) |
+| 2 | BMAddressList | Length-prefixed array of `BMAddress` objects |
+| 3 | BMParameter | Typed value wrapper (String, Int, Float, Double, Bool, Object) |
 | 4 | BMInvoke | RPC method call (method name, return method, parameters) |
 | 5 | Acceleration | Accelerometer reading (x, y, z as f64) |
 | 6 | TouchSet | Multi-touch input (list of Touch points) |
@@ -31,7 +32,7 @@ Every serializable object in the protocol is identified by a 16-bit class ID. Th
 
 ## Notes
 
-- Class ID **2** is unassigned.
+- Class ID **2** (`BMAddressList`) is assigned but is not registered by every endpoint. An endpoint that has not registered a class gives up on the whole message rather than the one field, so a class being defined somewhere does not make it safe to send everywhere.
 - Class ID **13** is technically defined but never used. Shake event sending was never implemented in any of the original controller apps.
 - Class ID **20** is unassigned.
 - Class ID **256** (0x100) is a secondary registration for `BMPacket`, likely used as a version-specific alias.

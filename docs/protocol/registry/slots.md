@@ -6,9 +6,9 @@ A slot ID is a numeric identifier assigned to each game host by the registry ser
 
 1. The game host calls [`registry.register`](register.md) with `slotId = 1` as a placeholder.
 2. The registry server assigns the actual slot ID and includes it in the `BMRegistryInfo` it broadcasts.
-3. The game host receives its real slot ID via one of two push notifications:
-    - [`onHostConnected`](host-connected.md): The host checks if the incoming `BMRegistryInfo` matches its own `deviceId`. If so, it adopts the `slotId` from the server's response.
-    - [`onList`](list.md): Similarly, the host scans the list for its own `deviceId` and reads the assigned `slotId`.
+3. The game host learns its real slot ID from [`onHostConnected`](host-connected.md), by checking whether the incoming `BMRegistryInfo` carries its own `deviceId` and adopting the `slotId` if it does.
+
+An endpoint may also recover the same value from [`onList`](list.md) by scanning the list for its own `deviceId`, and some do. Others implement no `onList` handler at all, so a registry has to push `onHostConnected` to a newly registered host rather than assume the list will reach it.
 
 ## Slot ID Semantics
 

@@ -14,7 +14,11 @@ These RPCs are sent by the game host to the controller to enable, disable, and c
 | `enableOrientation` | `enabled: boolean` | Enable or disable orientation (rotation vector) input. |
 | `setOrientationInterval` | `interval: float` | Set the orientation sample interval in seconds. |
 
-All interval values are specified in seconds. The default interval for all sensors is `0.1` (100ms / 10Hz).
+All interval values are specified in seconds, as a `float`. Sending one as a
+double instead means the call reaches no method at all and is dropped without a
+reply. See [Dispatch](../objects/bm-invoke.md#dispatch).
+
+The default interval for every sensor and for touch is `0.1`, meaning 100ms.
 
 ## enableAccelerometer
 
@@ -28,6 +32,31 @@ The interval is clamped on the host side:
 ## Interval Conversion
 
 The controller receives intervals as floating-point seconds and converts them to milliseconds internally (e.g., `0.1` becomes `100ms`).
+
+## What the Interval Means
+
+An interval is not a send rate, and it does not mean the same thing for touch as
+it does for the sensors.
+
+| Channel | When a packet goes out | Rate at the default `0.1` |
+|---------|------------------------|---------------------------|
+| Accelerometer, gyroscope, orientation | Once per interval | 10Hz |
+| Touch | Once per **half** interval, whenever a finger has moved | 20Hz |
+
+So touch is twice as lively as its interval suggests, and a game asking for a
+particular touch rate should ask for double the period it wants. A game after
+60Hz touch wants a 16ms period, so it sends `0.033`.
+
+Touch has one more behaviour the sensors do not. A set that has already been
+sent repeats at the **full** interval, up to three times, but only while touch
+reliability is Unreliable. This covers a dropped datagram so a game is not left
+holding a stale finger position. On a reliable channel the repeats are pointless
+and do not happen.
+
+Between flushes a controller coalesces: it keeps one position per finger and
+overwrites it, so a flush carries where each finger is now and never a history
+of where it has been. Raising the rate gives smoother tracking, not more data
+about the past.
 
 ## Notes
 

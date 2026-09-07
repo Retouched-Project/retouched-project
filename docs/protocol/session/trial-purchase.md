@@ -31,7 +31,7 @@ The host sends this after something may have changed the player's in-game curren
 
 ## WaitForNewHost
 
-This one is about handoff. The current host sends it to tell the controller to let go of this connection and wait for a different host instead, named directly by its device id, for example when one game instance hands the controller off to another.
+This one is about handoff. The current host sends it to tell the controller to let go of this connection and wait for another host, naming the portal the controller should come back through, for example when one game instance hands the controller off to another.
 
 | Field | Value |
 |-------|-------|
@@ -42,8 +42,8 @@ This one is about handoff. The current host sends it to tell the controller to l
 
 | # | Type | Description |
 |---|------|-------------|
-| 1 | `string` | The device id of the new host the controller should wait for. |
+| 1 | `string` | The portal identifier the controller should return through. Same kind of value as [`GetPortalId`](portal-id.md) answers with. |
 
 ## Behavior
 
-`startTrial` and `endTrial` only flip a flag on the host's side, and `promptTrialUpsell` and `updateWallet` are one-way nudges that the controller acts on by itself, so none of the four expects a reply. `WaitForNewHost` is a little different: by naming the next host's device id, it lets the controller reconnect straight to it without going back through registry discovery. It usually travels alongside [`SetControlMode`](set-control-mode.md) `WAIT`, which parks the controller on its idle screen while the new connection comes up.
+`startTrial` and `endTrial` only flip a flag on the host's side, and `promptTrialUpsell` and `updateWallet` are one-way nudges that the controller acts on by itself, so none of the four expects a reply. `WaitForNewHost` is a little different: the controller stores the portal id it was given and switches itself into [`SetControlMode`](set-control-mode.md) `WAIT`, parking on its idle screen while the next host comes up. The mode change is part of handling the call rather than a separate message the host has to send.

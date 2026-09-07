@@ -23,8 +23,8 @@ The documentation is structured as follows:
 
 This documentation assumes the reader has a basic understanding of networking and programming concepts.
 
-> [!NOTE]
-> **This documentation is a work in progress!**
+!!! note
+    **This documentation is a work in progress!**
 
 ## License
 

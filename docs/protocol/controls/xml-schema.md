@@ -52,6 +52,10 @@ A concrete document then looks like this:
 
 Every `yes/no` attribute follows the same rule: any value other than the exact string `no` counts as yes.
 
+Not every writer emits every attribute. `width`, `height` and `sample` are all
+absent from some documents, so a parser needs defaults rather than a required
+set. `sample` defaults to `linear`.
+
 ## Coordinate System
 
 Positions and sizes are not pixels. Every `left`, `top`, `width`, and `height` (on both display objects and their hit rects) is a normalized fraction in the range `0` to `1`, measured against the scheme's `width` and `height`. A button at `left="0.5"` sits halfway across the layout regardless of the device's real resolution. The controller scales those fractions to its own screen, which is what lets one scheme fit any phone.
@@ -60,7 +64,20 @@ Positions and sizes are not pixels. Every `left`, `top`, `width`, and `height` (
 
 Controllers parse the document by element name as it streams in, rather than by strict nesting. The meaningful elements are the leaves: `BMApplicationScheme`, `Resource`, `DisplayObject`, `Asset`, `HitRect`, `Option`, and the `data` block inside a resource. The `<Resources>`, `<Layout>`, and `<Menu>` wrappers are just containers and carry no attributes of their own, so a parser can treat them as grouping and act only on the leaves it recognizes, ignoring anything it does not.
 
-A game can also send a scheme again mid-session to change the layout (for example when a menu opens). An update is just another scheme document; the controller applies it over the current one, replacing the display objects it contains.
+Some documents begin with a UTF-8 byte order mark, so a parser has to skip one before the declaration.
+
+## Updates
+
+A game can send a scheme again mid-session to change the layout, for example when a menu opens. An update is another scheme document, delivered the same way but under the `updateXML` set id, and it is merged into the current scheme rather than replacing it.
+
+| Part | On an update |
+|------|--------------|
+| Root attributes | Ignored. The base keeps the ones it was given. |
+| Resources | Overlaid by `id`. A matching id is replaced, a new one is appended, and one the update omits is kept. |
+| Display objects | Replaced wholesale. Anything the update omits is gone. |
+| Menu options | Replaced. An update carrying no options clears the menu. |
+
+The asymmetry between resources and display objects is the point of the format. Layout is text and cheap to resend in full, while artwork is Base64 encoded image data and expensive, so an update carries the whole of the new layout but only the artwork that changed. An update is typically a small fraction of the document that established the scheme.
 
 ## See Also
 

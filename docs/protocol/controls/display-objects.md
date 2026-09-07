@@ -6,7 +6,7 @@ A `<DisplayObject>` is one item in the layout: a button, a d-pad, a static image
 
 | Attribute | Type | Description |
 |-----------|------|-------------|
-| `id` | int | Unique identifier for the object within the scheme. Used to match objects across layout updates. |
+| `id` | int | Identifier for the object within the scheme. Not used to match objects across [updates](xml-schema.md#updates), which replace the layout wholesale, and some writers omit it entirely. |
 | `type` | string | One of `button`, `image`, `text`, or `dpad`. |
 | `left` | float | Left edge, normalized `0` to `1`. |
 | `top` | float | Top edge, normalized `0` to `1`. |
@@ -73,7 +73,7 @@ A directional pad. Instead of a single press it reports a direction, and it carr
 | Attribute | Type | Description |
 |-----------|------|-------------|
 | `deadzone` | float | Size of the dead area at the center where no direction registers, as a fraction `0` to `1` of the pad. Defaults to `0.25` when absent; values above `1` are ignored. |
-| `radial` | yes/no | When `yes`, the pad reads touches radially by angle and distance from the center, using a circular dead zone. When `no`, it uses a rectangular center dead zone. |
+| `radial` | yes/no | When `yes`, the pad reads touches radially by angle and distance from the center, using a circular dead zone. When `no`, it uses a rectangular center dead zone. Defaults to `yes` when absent, and no endpoint writes it, so hand authored documents are the only place it appears. |
 
 A d-pad draws up to nine [asset](resources.md) frames, one per state:
 
@@ -111,3 +111,5 @@ An interactive object (a button or a d-pad) may include a single `<HitRect>` chi
 ```
 
 When a `<HitRect>` is absent, the hit area is simply the object's own `left`/`top`/`width`/`height` bounds.
+
+On a d-pad it does one more job. A pad follows the finger that is dragging it, and the hit rect is the region it may be dragged within, so a d-pad whose hit rect is larger than its drawn bounds can float around inside it. This is the usual reason a d-pad carries one, and it means a hit rect that merely matches the drawn bounds pins the pad in place.

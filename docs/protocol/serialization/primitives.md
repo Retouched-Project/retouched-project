@@ -45,3 +45,13 @@ A null or empty string is encoded as `00 00` (length 0, no data bytes).
 
 !!! note
     The length prefix is the **byte length** of the encoded UTF-8 data, not the character count. Multi-byte UTF-8 characters will have a byte length greater than the character count.
+
+!!! warning
+    The length prefix is little-endian, like every other integer here. The
+    conventional UTF writing call on several platforms emits a **big-endian**
+    length instead, so reaching for it produces strings no endpoint can read.
+
+Characters outside the Basic Multilingual Plane are written as two three byte
+sequences rather than one four byte sequence, and readers decode the payload as
+plain UTF-8 without reversing that, so they do not survive a round trip.
+Everything within the BMP is ordinary UTF-8.

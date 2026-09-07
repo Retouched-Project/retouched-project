@@ -7,7 +7,7 @@ Registers the device with the registry server. This is the first RPC call made a
 | Field | Value |
 |-------|-------|
 | **Method** | `registry.register` |
-| **Return Method** | `onRegister` |
+| **Return Method** | The caller's own, never a fixed name. See [Return Values](../objects/bm-invoke.md#return-values). |
 | **Arguments** | 1 or 2 (see below) |
 
 ### Arguments
@@ -23,14 +23,16 @@ Registers the device with the registry server. This is the first RPC call made a
 |---|---|---|
 | `slotId` | `1` (self-assigned) | `0` |
 | `currentPlayers` | `0` (initial) | (omitted) |
-| `maxPlayers` | `128` (default) | (omitted) |
+| `maxPlayers` | The game's own limit | (omitted) |
 | Post-registration | Starts sending pings | Calls [`registry.list`](list.md) |
 
-Game hosts register with `slotId = 1` to indicate they are a host. The server may reassign the slot ID via push notifications. Controllers register with `slotId = 0`, which tells the server this device is a controller, not a host.
+`maxPlayers` has no protocol default and no protocol limit. It is whatever the game allows, bounded only by the i16 field it travels in.
+
+Game hosts register with `slotId = 1` as a placeholder, and the server replaces it with the real one (see [Slot Allocation](slots.md)). Controllers register with `slotId = 0`, which is also what keeps `currentPlayers` and `maxPlayers` off the wire for them, since those two fields are only serialized when the slot is positive.
 
 ## Response
 
-The server responds by invoking `onRegister` on the caller:
+The server replies by invoking whichever return method the caller named:
 
 | # | Type | Description |
 |---|------|-------------|

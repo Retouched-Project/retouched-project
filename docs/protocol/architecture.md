@@ -28,13 +28,25 @@ graph LR
 
 The relay is the hinge between the two: it is how a controller reaches a host it has no direct line to yet, just long enough to arrange one.
 
+## Who Dials Whom
+
+Worth stating plainly, because the direction is the reverse of what the naming suggests and several details follow from it.
+
+| Party | Listens for | Dials |
+|-------|-------------|-------|
+| Registry server | Everyone, on its own port | Nobody |
+| Controller | The game's direct connection, and its datagrams | The registry |
+| Game host | Nothing | The registry, then each controller it is asked to serve |
+
+So a **controller is a listener** and a **game host never accepts a connection**. Three things elsewhere in this specification follow from that: the controller is the side that serves a [Flash socket policy](transport/flash-policy.md), the controller's declared unreliable port is the one that has to be truthful, and the game still has to speak first once connected because [a controller cannot address a host that has not acked it](messages/ping-ack.md#why-the-ack-is-required).
+
 ## Protocol Layers
 
 Every byte on the wire is built up through the same layers, whichever phase is active. Each layer has its own page in this specification.
 
 | Layer | Responsibility | Reference |
 |-------|----------------|-----------|
-| Transport | Move bytes over TCP (reliable) or UDP (unreliable). Each device listens on one port for each. | [TCP Framing](transport/tcp-framing.md), [UDP Framing](transport/udp-framing.md) |
+| Transport | Move bytes over TCP (reliable) or UDP (unreliable). | [TCP Framing](transport/tcp-framing.md), [UDP Framing](transport/udp-framing.md) |
 | Framing | Mark message boundaries: a 4-byte length prefix on TCP, the datagram itself on UDP. | [TCP Framing](transport/tcp-framing.md) |
 | Serialization | Encode values little-endian: an object envelope plus class id, and length-prefixed UTF-8 strings. | [Object Encoding](serialization/object-encoding.md), [Class ID Registry](serialization/class-ids.md), [Primitive Types](serialization/primitives.md) |
 | Packet | Wrap each message in a `BMPacket` carrying its channel, sequence, type, and the sender's identity. | [BMPacket](packets/bm-packet.md), [Packet Types](packets/packet-types.md), [Channels](packets/channels.md) |

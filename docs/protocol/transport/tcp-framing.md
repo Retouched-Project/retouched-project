@@ -28,7 +28,12 @@ If the incoming data contains more bytes than one message, the receiver processe
 
 ## Buffer Management
 
-The TCP socket uses a dynamically resized buffer. If the announced length exceeds the current buffer capacity, the buffer is expanded up to a maximum of 96 KB. Messages exceeding this limit are dropped.
+The TCP socket uses a dynamically resized buffer. If the announced length exceeds the current buffer capacity, the buffer is expanded, but only while the required capacity stays under 98,304 bytes. A message needing more than that is **not** dropped and raises no error.
+
+!!! warning
+    A receiver asked to grow past that limit simply does not grow. It goes on waiting for a message that can never fit, so the connection stops making progress and nothing is logged at either end. The sender's write succeeds and the receiver stays silent.
+
+    The length prefix counts toward the limit, so the largest payload that reliably fits is a few bytes under 98,300. A sender that splits large content into [chunks](../packets/chunked-transfer.md) never approaches it, which is what the chunk mechanism is for.
 
 ## Flash Socket Policy
 

@@ -9,7 +9,20 @@ The reliability mode determines which transport a packet is sent over. It acts a
 | 2 | ReliableOrdered | TCP | Packet is sent over TCP. Delivery is guaranteed. |
 
 !!! note
-    `ReliableUnordered` (1) and `ReliableOrdered` (2) are functionally identical. Both are sent over TCP, which inherently provides ordered delivery. The distinction exists in the enum but has no practical difference in the original implementation.
+    `ReliableUnordered` (1) and `ReliableOrdered` (2) select the same transport, and TCP orders the bytes either way, so the two are interchangeable when choosing how to send something.
+
+## Reliability Is Never Sent
+
+The mode does not appear anywhere in the [`BMPacket`](../protocol/packets/bm-packet.md) wire format. It is a local value at both ends, and it means something different at each.
+
+**On the sending side** it selects the socket, which is all it does.
+
+**On the receiving side** it is set by whichever reader accepted the bytes, so it records how the packet arrived rather than anything the sender declared. A stream reader stamps every packet it decodes as `ReliableOrdered`; a datagram reader leaves it at the default of `Unreliable`.
+
+Two behaviours read it, and both are asking a local question:
+
+- A controller adopts the source port of an incoming Ack as the sender's reliable port only when that Ack came in over the stream, which is the reader's stamp rather than the sender's choice.
+- A channel discards an arriving packet whose `sequence` is lower than the last one seen, unless that channel is configured as `ReliableOrdered`. This reads the mode the channel was last given by [`setReliabilityForTouch`](../protocol/session/reliability-config.md), not anything on the packet.
 
 ## Transport Mapping
 

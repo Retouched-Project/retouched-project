@@ -45,7 +45,7 @@ UDP datagrams have inherent boundaries, so no length prefix is used. The datagra
 
 ### Version Handshake
 
-The first packet between any two BM devices. Both sides send a 12-byte reliable TCP message:
+The first message between any two BM devices, and a 12-byte one sent over TCP:
 
 - **size** (i32): Always `8`, indicating that 8 bytes follow.
 - **currentVersion** (i32): The sender's protocol version.
@@ -53,7 +53,7 @@ The first packet between any two BM devices. Both sides send a 12-byte reliable 
 
 Versions are encoded as `(major << 24) | (minor << 16) | build`. For example, the latest BM SDK reports `currentVersion` as `1.7.0` and `minVersion` as `0.9.0`.
 
-Each side checks whether its own version satisfies the other's minimum requirement. If not, the connection is closed.
+Which side sends first is decided by role rather than by who dialled: a registry server opens, a game host opens toward a controller, and a controller only ever answers. Each side then checks whether its own version satisfies the other's minimum requirement, and closes the connection if not. See [Handshake](connection/handshake.md).
 
 ### Registry Connection
 
@@ -118,7 +118,7 @@ At a high level, a typical session follows these steps:
 2. A **controller** connects to the registry server via TCP, registers and calls `registry.list` to discover available games.
 3. The **controller** sends a `registry.relay` containing a `deviceConnectRequested` invoke targeting the game host.
 4. The **registry server** forwards the relay to the game host.
-5. The **game host** sends an `AckPacket` directly to the controller establishing the direct connection and calls `registry.update` with the server to update `currentPlayers`.
+5. The **game host** opens a TCP connection to the controller, using the address the relay carried, and sends an `AckPacket` over it. It also calls `registry.update` on the server to update `currentPlayers`.
 6. The **game host** delivers the `BMApplicationScheme` XML to the controller via `BMByteChunk` chunks.
 7. The **controller** collects the chunks and renders the control scheme, and begins sending input data.
 

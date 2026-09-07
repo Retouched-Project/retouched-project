@@ -42,7 +42,7 @@ sequenceDiagram
     note over Host,Controller: Direct Connection Initiated
     Host->>Controller: TCP Connect to Controller IP
     Host->>Controller: Handshake
-    Host->>Controller: AckPacket (Channel 0)
+    Host->>Controller: AckPacket
 ```
 
 ## Notes

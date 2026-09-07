@@ -17,21 +17,50 @@ The encoding consists of a **type tag** followed by the **value**:
 
 ### Type Tags
 
-| Tag | Value Type | Wire Format |
-|-----|-----------|-------------|
-| `@` | Object | Standard [object envelope](../serialization/object-encoding.md) + class-specific payload. |
-| `i` | Signed int | i32 (4 bytes) |
-| `I` | Unsigned int | u32 (4 bytes) |
-| `s` | Signed short | i16 (2 bytes) |
-| `S` | Unsigned short | u16 (2 bytes) |
-| `f` | Float | f32 (4 bytes, IEEE 754) |
-| `d` | Double | f64 (8 bytes, IEEE 754) |
-| `B` | Boolean | bool (1 byte) |
-| `*` | String | UTF |
+| Tag | Value Type | Wire Format | Safe to send |
+|-----|-----------|-------------|------------------------|
+| `@` | Object | Standard [object envelope](../serialization/object-encoding.md) + class-specific payload. | Yes |
+| `i` | Signed int | i32 (4 bytes) | Yes |
+| `I` | Unsigned int | u32 (4 bytes) | Yes, but see below |
+| `s` | Signed short | i16 (2 bytes) | No |
+| `S` | Unsigned short | u16 (2 bytes) | No |
+| `f` | Float | f32 (4 bytes, IEEE 754) | Yes |
+| `d` | Double | f64 (8 bytes, IEEE 754) | No |
+| `B` | Boolean | bool (1 byte) | Yes |
+| `*` | String | UTF | Yes |
 
 ### Total minimum size
 
 5 (envelope) + 3 (tag as UTF) + 1 (smallest value: bool) = **9 bytes**
+
+## Choosing a Tag
+
+Every endpoint can decode all nine tags, so the table above is the full receiving
+surface. The sending surface is smaller, and staying inside it matters, because
+the tag decides which method the receiver calls. See
+[Dispatch](bm-invoke.md#dispatch).
+
+In practice only `i`, `I`, `f`, `B`, `*` and `@` reach the wire. `S` never
+appears at all.
+
+`s` and `d` are well formed, and an implementation is free to emit either, but
+no method anywhere declares a short or a double parameter, so a value sent under
+one matches nothing and the call is dropped. This is the usual surprise with
+fractional values: a double is not refused on the way out, it is
+undeliverable when it lands. Every fractional argument in the protocol is a
+float, and `f` is the only tag that reaches one.
+
+`I` deserves its own warning. It is the correct tag for an unsigned value, but
+on some endpoints it decodes to a **boxed** integer type rather than a
+primitive, and a boxed type matches no primitive signature. An `I` argument can
+therefore fail to reach a method that looks like it should accept it. `i` is the
+safer choice: it is the same four bytes on the wire, differing only in the tag,
+and it widens cleanly to whatever the receiving method declares.
+
+!!! warning
+    Sending a value that is technically valid but wider than the target method
+    expects is not an error anyone will see. The call is dropped on the far
+    side, silently, and the sender's write appears to succeed.
 
 ## Object Parameters
 

@@ -13,12 +13,17 @@ sequenceDiagram
 
     Host->>Controller: AckPacket
     Controller->>Host: GetPortalId
-    Host-->>Controller: onPortalId(id)
     Controller->>Host: setCapabilities(mask)
+    Host-->>Controller: onPortalId(id)
     Controller->>Host: RequestXML(height, width, deviceId)
+    opt some hosts set the mode while answering the request
+        Host->>Controller: SetControlMode(GAME)
+    end
     Host-->>Controller: XML delivered as BMByteChunk
     Controller->>Host: onControlSchemeParsed(deviceId)
-    Host->>Controller: SetControlMode(GAME)
+    opt when the host wants input on a particular transport
+        Host->>Controller: setReliabilityForTouch(touch, sensors)
+    end
 
     note over Host,Controller: Gameplay Loop
     Controller->>Host: Touch / Acceleration / Gyro / DPad
